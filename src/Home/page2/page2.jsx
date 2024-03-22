@@ -77,6 +77,10 @@ const InfoPage = () => {
   const [localCategoryTitle, setLocalCategoryTitle] = useState(initialCategoryId);
   const categoryTitleRedux = useSelector((state) => state?.title?.categories[activeCategory]);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
+  const [sortState, setSortState] = useState(null)
+  const handleSortState = () => {
+    setSortState(prevState => !prevState)
+  }
 
   const loopClick = () => {
     setShowFilterPage(true);
@@ -160,13 +164,15 @@ const InfoPage = () => {
 
   // Сброс значения pizda при размонтировании компонента
 
+  console.log(sortState)
+
   return (
       <>
         <div>
           {showFilterPage && (
               <div className={cl.filterPageOverlay}>
                 <div className={cl.modalContainer} onClick={handleFilterPageClose}>
-                  <FilterPage  handleFilterPageClose={handleFilterPageClose} />
+                  <FilterPage handleSortState={handleSortState} handleFilterPageClose={handleFilterPageClose} />
                 </div>
               </div>
           )}
@@ -217,11 +223,11 @@ const InfoPage = () => {
                 <div className={cl.food__desc}>Нажмите на кнопку «фильтры», чтобы выбрать наиболее подходящее место</div>
               </div>
               <div className={cl.food__icon}>
-                <img onClick={loopClick} src={tool} alt="" />
+                <img onClick={() => {loopClick(); setSortState(false)}} src={tool} alt="" />
               </div>
             </div>
             {(categoryTitleRedux || localCategoryTitle) && (
-                <SortedPosts fId={categoryId} categoryId={activeCategory} categoryTitle={localCategoryTitle} posts={categoryPosts} />
+                <SortedPosts sortState={sortState} fId={categoryId} categoryId={activeCategory} categoryTitle={localCategoryTitle} posts={categoryPosts} />
             )}
           </section>
 

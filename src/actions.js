@@ -79,7 +79,8 @@ const rootReducer = (state = initialState, action) => {
             return {
                 ...state,
                 selectedCategoryId: action.payload,
-            }; case 'SET_CURRENT_SUBCATEGORY':
+            };
+            case 'SET_CURRENT_SUBCATEGORY':
             return {
                 ...state,
                 currentSubcategoryId: action.payload,

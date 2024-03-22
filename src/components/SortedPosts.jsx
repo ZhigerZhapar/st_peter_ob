@@ -2,27 +2,48 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import yellow_heart from './../Home/categoryPage/imgs/main/section__publications/icons/yellow_heart.svg';
 import heart from './../Home/page2/img/food/heart.svg';
+import { resetButton, setButtonPressed, setButtons } from './../features/buttonSlide.js';
 import { useDispatch, useSelector } from 'react-redux';
-import useFetch from './hooks/useFetch.js';
+import useFetcher from './hooks/useFetch.js';
 import cl from './../Home/page2/page2.module.css';
 import Loader from "./UI/Loader/Loader.jsx";
 import axios from "axios";
 import { setSelectedSubcategory } from "../actions.js";
-import { useFetchPupsik } from "./hooks/useFetchPupsik.js";
+import {useFetchPupsik} from "./hooks/useFetchPupsik.js";
+import useFetch from './hooks/useFetch.js';
 
-const SortedPosts = ({ fId, categoryId, categoryTitle }) => {
+
+const SortedPosts = ({ sortState, fId, categoryId, categoryTitle }) => {
     const [localData, setLocalData] = useState([]);
     const [loadedPostsCount, setLoadedPostsCount] = useState(8); // Количество загруженных постов
     const dispatch = useDispatch();
+    const [allData, setAllData] = useState([]);
     const selectedSubsubcategory = useSelector(state => state.title.subsubcategory);
-    const { data, loading, error } = useFetch(
-        `https://places-test-api.danya.tech/api/categories/${fId}?populate=posts,posts.images,posts.category,posts.subcategory,posts.subsubcategory`
-    );
+    const {data, loading, error} =
+        useFetch(`https://places-test-api.danya.tech/api/categories/${fId}?populate=posts,posts.images,posts.category,posts.subcategory,posts.subsubcategory`)
+
+    console.log(data)
+
+
     const selectedSubcategory = useSelector(state => state.title.selectedSubcategory);
+
     const [datas, setDatas] = useState({});
     const [filterData, setFilterData] = useState([]);
 
-    // Получаем параметры фильтрации из localStorage
+    const [fetching, isDataLoadingPupsik, errorPupsik] = useFetchPupsik(async () => {
+        const response = await axios.get(
+            `https://places-test-api.danya.tech/api/getUser?uid=${window?.Telegram?.WebApp?.initDataUnsafe?.user?.id}`
+        );
+        console.log(response)
+        setDatas(response.data || {});
+        return response;
+    });
+
+    useEffect(() => {
+        fetching();
+    }, []);
+
+
     useEffect(() => {
         const savedSubcategory = JSON.parse(localStorage.getItem('selectedSubcategory'));
         if (savedSubcategory !== undefined) {
@@ -30,7 +51,6 @@ const SortedPosts = ({ fId, categoryId, categoryTitle }) => {
         }
     }, [dispatch]);
 
-    // Сохраняем параметры фильтрации в localStorage при изменении
     useEffect(() => {
         localStorage.setItem('selectedSubcategory', JSON.stringify(selectedSubcategory));
     }, [selectedSubcategory]);
@@ -77,14 +97,13 @@ const SortedPosts = ({ fId, categoryId, categoryTitle }) => {
     useEffect(() => {
         if (data && data.length > 0) {
             const uniqueData = data.filter((newPost) => {
-                return !localData.some((existingPost) => existingPost.id === newPost.id);
+                return !allData.some((existingPost) => existingPost.id === newPost.id);
             });
 
-            setLocalData((prevData) => [...prevData, ...uniqueData]);
+            setAllData((prevData) => [...prevData, ...uniqueData]);
         }
     }, [data]);
 
-    // Применяем фильтры к данным после их загрузки
     useEffect(() => {
         let filteredData = localData;
 
@@ -100,8 +119,8 @@ const SortedPosts = ({ fId, categoryId, categoryTitle }) => {
                 return postSubsubcategoryIds.includes(selectedSubsubcategory) || post.attributes.subsubcategory?.data?.id === selectedSubsubcategory;
             });
         }
+        filteredData.sort((a, b) => sortState ? Number(b.attributes.views) - Number(a.attributes.views) : new Date(b.attributes.createdAt) - new Date(a.attributes.createdAt));
 
-        // Устанавливаем loadedPostsCount в 8 после фильтрации данных
         setLoadedPostsCount(8);
         setFilterData(filteredData);
     }, [localData, selectedSubcategory, selectedSubsubcategory]);
@@ -143,13 +162,12 @@ const SortedPosts = ({ fId, categoryId, categoryTitle }) => {
                     ))}
                 </div>
             )}
-            {localData.length > loadedPostsCount && filterData.length > loadedPostsCount && (
+            {!loading && localData.length > loadedPostsCount && filterData.length > loadedPostsCount && (
                 // Если еще есть посты для загрузки, показываем кнопку "Загрузить еще"
                 <button className={cl.sintolkaban} onClick={loadMorePosts}>Загрузить еще</button>
             )}
-
         </div>
     );
 };
 
-export default SortedPosts;
+export default SortedPosts

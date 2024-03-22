@@ -165,7 +165,7 @@ const Near = () => {
             </div>
                 {cardsToShow < (data?.posts?.length || 0) && (
                 <button onClick={loadMoreCards} className={cl.but}>
-                    ПОКАЗАТЬ ВСЕ
+                    ЗАГРУЗИТЬ ЕЩЕ
                 </button>
             )}
             </div>

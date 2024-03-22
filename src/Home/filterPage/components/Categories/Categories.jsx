@@ -20,7 +20,7 @@ import Main from "../Main/Main.jsx";
 import SelectBlock from "../SelectBlock/SelectBlock.jsx";
 import MySelector from "../UI/MySelector/MySelector.jsx";
 
-const Categories = ({ activeCategory, onCategoryClick, handleFilterPageClose }) => {
+const Categories = ({ handleSortState,activeCategory, onCategoryClick, handleFilterPageClose }) => {
     const [selectedSubcategoryd, setSelectedSubcategoryd] = useState(activeCategory); // Изменено на selectedSubcategoryd
 
     const [selectedButton, setSelectedButton] = useState(activeCategory);
@@ -218,16 +218,10 @@ const Categories = ({ activeCategory, onCategoryClick, handleFilterPageClose }) 
             <Header handleFilterPageClose={handleFilterPageClose}  resetUgu={handleResetSelection}/>
             <div className={cl.selectBlock}>
                 <MySelector
-                    onClick={() => handleClick(0)}
+                    onClick={() => {handleClick(0); handleSortState()}}
                     isActive={activeButtonIndex === 0}
                 >
                     По популярности
-                </MySelector>
-                <MySelector
-                    onClick={() => handleClick(1)}
-                    isActive={activeButtonIndex === 1}
-                >
-                    Сначала новые посты
                 </MySelector>
             </div>
             <MyLine/>

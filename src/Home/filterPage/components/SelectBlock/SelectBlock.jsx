@@ -7,10 +7,10 @@ import Categories from "../Categories/Categories.jsx";
 import Places from "../Places/Places.jsx";
 import MyBigButton from "../UI/MyBigButton/MyBigButton.jsx";
 
-const SelectBlock = ({activeCategory,handleFilterPageClose}) => {
+const SelectBlock = ({ handleSortState,activeCategory,handleFilterPageClose}) => {
     return (
         <>
-            <Categories handleFilterPageClose={handleFilterPageClose} activeCategory={activeCategory}/>
+            <Categories handleSortState={handleSortState} handleFilterPageClose={handleFilterPageClose} activeCategory={activeCategory}/>
 
         </>
     );

@@ -333,31 +333,35 @@ const Page3 = () => {
               <div className={cl.main}>
                 <h1 className={cl.qwe}>Похожие места</h1>
                 <div className={cl.cards}>
-                  {newData?.slice(0, 7)
-                      .filter(post => post.id !== localData[0]?.id) // Исключаем текущий пост
+                  {newData
+                      ?.sort((a, b) => b.id - a.id) // Сортируем посты по идентификатору в порядке убывания
+                      .slice(0, 6)
+                      .reverse() // Переворачиваем массив, чтобы получить порядок элементов в обратном направлении
+                      // Выбираем только первые 6 элементов
                       .map((post) => (
                           <div className={`${cl.card}`} key={post.id}>
                             <div className={cl.image__card}>
                               <Link to={`/page2/previewPage/${post.id}?categoryId=${categoryId}`}>
-                                <img className={cl.asd}
-                                     src={`https://places-test-api.danya.tech${post.attributes.images.data[0].attributes.url}`}
-                                     alt=""/>
+                                <img className={cl.asd} src={`https://places-test-api.danya.tech${post.attributes.images.data[0].attributes.url}`} alt=""/>
                               </Link>
-                              <button onClick={() => handleButtonClicker(post.id, post.id)}
-                                      className={`${cl.main_like}`}>
+                              <button onClick={() => handleButtonClicker(post.id, post.id)} className={`${cl.main_like}`}>
                                 <img src={(datas?.user?.liked || []).some(item => item.id === post.id) ? yellow_heart : heart} alt=""/>
                               </button>
                             </div>
                             <div className={cl.main_matin}>
-                              <h2 className={`${cl.main_text}`}>{post?.attributes?.subsubcategory?.data?.attributes?.title
-                                        ? post?.attributes?.subsubcategory?.data?.attributes?.title
-                                        : post?.attributes?.subcategory?.data?.attributes?.title
-                                            ? post?.attributes?.subcategory?.data?.attributes?.title
-                                            : data?.attributes?.title}</h2>
+                              <h2 className={`${cl.main_text}`}>
+                                {post?.attributes?.subsubcategory?.data?.attributes?.title
+                                    ? post?.attributes?.subsubcategory?.data?.attributes?.title
+                                    : post?.attributes?.subcategory?.data?.attributes?.title
+                                        ? post?.attributes?.subcategory?.data?.attributes?.title
+                                        : data?.attributes?.title}
+                              </h2>
                               <p className={`${cl.main_sub}`}>{post.attributes.title}</p>
                             </div>
                           </div>
                       ))}
+
+
 
 
                 </div>
