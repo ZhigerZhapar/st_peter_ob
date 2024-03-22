@@ -38,13 +38,9 @@ const SortedPosts = ({ fId, categoryId, categoryTitle }) => {
     useEffect(() => {
         if (!loading && !error && data && data.attributes && data.attributes.posts && data.attributes.posts.data) {
             console.log("SortedPosts - Data received:", data);
-            // Проверяем, что данные соответствуют текущей категории (fId)
-            if (data.id === categoryId) {
-                setLocalData(data.attributes.posts.data || []);
-            }
+            setLocalData(data.attributes.posts.data || []);
         }
     }, [data, loading, error, categoryId, fId]);
-
 
     const handleButtonClick = async (buttonId, postId) => {
         try {
